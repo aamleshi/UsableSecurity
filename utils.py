@@ -2,8 +2,10 @@
 
 import os
 import googleapiclient.discovery
-
 def keyword_to_videos(query, maxResults=1):
+    return {"videoLink": 1}
+
+def keyword_to_videos2(query, maxResults=1):
     """Lists YouTube videos and metadata for given search keyword.
 
     Keyword args: 
