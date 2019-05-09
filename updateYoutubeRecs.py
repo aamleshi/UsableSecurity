@@ -12,12 +12,15 @@ def updateUserRecs(UID, client):
         row = amazonHistorySheet.row_values(rowNum) 
         if row == []:
             break
-        print(len(row))
+        #print(len(row))
         if len(row) == 4:
             continue
         amazonHistorySheet.update_cell(rowNum, 4, str(time.time()))
+        #print(row[2])
         videoRecs = keyword_to_videos(row[2])
-        newRec = [str(time.time()), videoRecs['videoLink'], rowNum]
+        #print(videoRecs)
+        for item in videoRecs["items"]:
+            newRec = [str(time.time()), "https://www.youtube.com/watch?v="+item['id']['videoId'], rowNum]
         youtubeRecSheet.append_row(newRec)
 
 def main():

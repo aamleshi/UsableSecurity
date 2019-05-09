@@ -2,10 +2,9 @@
 
 import os
 import googleapiclient.discovery
-def keyword_to_videos(query, maxResults=1):
-    return {"videoLink": 1}
 
-def keyword_to_videos2(query, maxResults=1):
+
+def keyword_to_videos(query, maxResults=1):
     """Lists YouTube videos and metadata for given search keyword.
 
     Keyword args: 
@@ -30,15 +29,15 @@ def keyword_to_videos2(query, maxResults=1):
     request = youtube.search().list(
         part="snippet",
         maxResults=maxResults,
-        q=query
+        q=query,
+        safeSearch="strict",
+        type="video"
     )
-    print('hi')
     response = request.execute()
-
-    print(response)
     return response
 
 # keyword_to_videos('cats')
-
+if __name__ == '__main__':
+    print(keyword_to_videos("cat"))
 
     ##get thumbnail url, get video id.
