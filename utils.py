@@ -34,6 +34,7 @@ def keyword_to_videos(query, maxResults=1):
     response = request.execute()
 
     print(response)
+    return response
 
 # keyword_to_videos('cats')
 
