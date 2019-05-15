@@ -42,3 +42,34 @@ alert("hello1");
 //content = ytd_app.childNodes;
 //console.log(content);
 
+
+/* using jquery */
+$(document).ready(function(){ 
+	var ytd_app = $('ytd-app');
+
+	console.log($('ytd-app'));
+	console.log($('ytd-compact-video-renderer'));
+	console.log($('div#contents.style-scope.ytd-compact-autoplay-renderer'));
+	console.log(ytd_app.find('#contents.style-scope.ytd-compact-autoplay-renderer'));
+
+	console.log(ytd_app.find('#content #page-manager'));
+
+	//var ytd_app_obj = document.getElementsByTagName('ytd-app');
+	//console.log($(ytd_app_obj).children('#content.style-scope.ytd-app'));
+	//console.log($("#items").find("ytd-watch-next-secondary-results-renderer"));
+	//console.log($('ytd-compact-video-renderer'));
+	//console.log($(typeof('ytd-compact-video-renderer')));
+
+	//console.log($('ytd-watch-next-secondary-results-renderer'));
+// class: style-scope ytd-watch-next-secondary-results-renderer
+
+//ytd-compact-video-renderer
+//class="style-scope ytd-watch-next-secondary-results-renderer";
+
+
+	//console.log($('ytd-compact-video-renderer[class^="style-scope ytd-watch-next-secondary-results-renderer"]'));
+	//console.log($('ytd-app'))
+
+
+});
+
