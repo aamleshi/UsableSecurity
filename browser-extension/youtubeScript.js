@@ -1,9 +1,17 @@
 /* using jquery */
-$(document).ready(function(){ 
-	/* this worked once upon a time? */
-	console.log($("ytd-app"));
-	console.log($("ytd-app > div#content"));
-	console.log($("ytd-compact-video-renderer.ytd-watch-next-secondary-results-renderer:not([expansion='collapsed']).ytd-watch-next-secondary-results-renderer"));
+var f = (function(e){ 
+
+	console.log(e)
+	videos = document.querySelector("#related #items").children;
+
+
+	vid = videos[0];
+	console.log(vid);
+	console.log(vid.getElementsByTagName("img"));
+	thumbnail = vid.getElementsByTagName("img")[0];
+	thumbnail.src = "https://images.unsplash.com/photo-1508138221679-760a23a2285b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=967&q=80";
+
+
 
 	/* doesn't work for some reason */
 	//console.log($('ytd_app').find('ytd-compact-video-renderer'));
@@ -14,3 +22,5 @@ $(document).ready(function(){
 
 
 });
+
+setTimeout(f, 5000);
