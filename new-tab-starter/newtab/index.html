@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- webextension polyfill js (makes things work across chrome and firefox) -->
+    <script src="/lib/browser-polyfill.js"></script>
+    
+    <!-- our custom stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+
+    <title>New Tab</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+
+        <!-- top sites card -->
+        <div class="col-sm">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Open tabs</h5>
+              <p class="card-text" id="opentabs-content">We'll be adding this as a group!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- open tabs card -->
+        <div class="col-sm">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Top sites</h5>
+              <p class="card-text" id="topsites-content">This will be your challenge to add!</p>
+            </div>          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- our javascript code for this page -->
+    <script src="newtab.js"></script>
+  </body>
+</html>
