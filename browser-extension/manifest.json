@@ -10,7 +10,8 @@
     "content_scripts": [
       {
         "matches": ["https://*.youtube.com/*"],
-        "js": ["youtubeScript.js"]
+        "js": ["youtubeScript.js"],
+        "run_at": "document_end"
       }
     ],
     "manifest_version": 2
