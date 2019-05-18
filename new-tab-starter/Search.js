@@ -6,7 +6,7 @@ var last_key = "";
 function do_query(variable) {
     //chrome.runtime.sendMessage({greeting: variable});
     chrome.runtime.sendMessage(
-    "foo",
+    {greeting:variable},
     function (response) {
         console.log(response);
     }

@@ -1,14 +1,17 @@
 chrome.runtime.onMessage.addListener (
-function handleMessage(request, sender, sendResponse) {
-	sendResponse({farewell: "goodbye"});
-    const Http = new XMLHttpRequest();
-    var url = 'https://sheets.googleapis.com/v4/spreadsheets/1fyDFOC-aV5dD_FW-zOPJ9Ksw2nUaWs1KsFBsxjdCLqE/values/AmazonHist!1:2/?key=AIzaSyC_dGBnQF_813V5N4EKUwVrfuTsgWxBsNM';
-    //var url='https://sheets.googleapis.com/v4/spreadsheets/1fyDFOC-aV5dD_FW-zOPJ9Ksw2nUaWs1KsFBsxjdCLqE/values/Sheet1!A1:C5';
-   // url = url + '?key=AIzaSyC_dGBnQF_813V5N4EKUwVrfuTsgWxBsNM';
-    Http.open("GET", url);
-    Http.send();
-    Http.onreadystatechange=(e)=>{
-    console.log(Http.responseText)
-}
-}
+	function handleMessage(request, sender, sendResponse) {
+			console.log(request.greeting);
+			sendResponse({farewell: "goodbye"});
+		    const Http = new XMLHttpRequest();
+		    var url = 'https://docs.google.com/forms/d/e/1FAIpQLSeoSX4poMzl8lC98pAhjVMHszlmVP2oW3m-DlJB9t8tGCqKHw/formResponse'; 
+		    var req = 'entry.867543096=' + request.greeting;
+		    Http.open("POST", url, true);
+		    Http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		    Http.send(req);
+		    Http.onreadystatechange=(e)=>{
+			        console.log(Http.responseText)
+
+		    }
+
+	}
 )
