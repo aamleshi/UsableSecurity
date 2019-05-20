@@ -1,17 +1,17 @@
 var search = "";
 var product = "";
 var last_key = "";
+var uid = '0000'
 
 
-function do_query(variable) {
+function do_query(product, url, uid) {
     //chrome.runtime.sendMessage({greeting: variable});
     chrome.runtime.sendMessage(
-    {greeting:variable},
+    {PRODUCT:product, URL:url, UID:uid  },
     function (response) {
         console.log(response);
     }
     );
-    console.log("fuck");
     //sending.then();
 }
 
@@ -26,6 +26,7 @@ function getProduct() {
     product = temp;
     return product
 }
+
 
 
 function addItem(value) {
@@ -45,11 +46,11 @@ function addItem(value) {
 // addItem adds the query ([key: "number_of_search", value: "query"]) to the local history for amazon
 
 
-var ret = getProduct();
-if (ret != null) {
-    addItem(ret);
-    console.log(ret);
-    do_query(ret);
+var prod = getProduct();
+if (prod != null) {
+    //addItem(ret);
+    console.log(prod);
+    do_query(prod,document.location.href,uid);
 }
 if (last_key == 10) {
     window.localStorage.clear();
