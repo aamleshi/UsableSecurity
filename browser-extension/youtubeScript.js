@@ -3,10 +3,11 @@
 var init_observer = new MutationObserver(function(mutations){
   for (var i=0; i < mutations.length; i++){
     for (var j=0; j < mutations[i].addedNodes.length; j++){
-      checkNode(mutations[i].addedNodes[j]);
-      //checkMovingTHumbnail(mutations[i].addedNodes[j]);
-      	//remove overlays for our suggestions
-      //checkMetadata
+      checkNode(mutations[i].addedNodes[j], j);
+      // do any manipulation necessary to each as it loads (for uniformity). check its index for different behavior?
+      // issue: i want to selectively replace normal videos w a product video
+        //tentative idea: pass in array of product video details, pass in list of indices of og videos we want replaced
+        //  in checkNodes, if the index is one to be replaced, replace its info.
     }
   }
 
@@ -17,21 +18,26 @@ init_observer.observe(document.documentElement, {
   subtree: true
 });
 
-checkNode = function(addedNode) {
+
+checkNode = function(addedNode, index) {
   if (addedNode.nodeType === 1){
+
+    //put a bunch of if statements in?
+
     if (addedNode.matches('.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail')){
     	console.log("this simple thumbnail has initialized");
     	console.log(addedNode);
-      //SmartUnderline.init(addedNode);
-
-      	//addedNode.href = "hello";
+      console.log("child " + index + " of its parent");
+      //addedNode.href = "hello";
 
     }
 
     else if (addedNode.matches('#related #items #dismissable #thumbnail')) {
     	console.log("moving thumbnail has rendered");
-    	console.log(addedNode);
     	//set or disable moving thumbnail
+      addedNode.src = "";
+      console.log(addedNode);
+
     }
   }
 }
