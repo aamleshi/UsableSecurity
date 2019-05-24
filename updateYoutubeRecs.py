@@ -4,6 +4,52 @@ from utils import keyword_to_videos
 import time
 from tqdm import tqdm
 
+def updateAmzHistory(client):
+    amazonHistEndpoint = client.open("AmazonHistForm (Responses)").get_worksheet(0)
+    RIDdict = {}
+    values = amazonHistEndpoint.get_all_values()
+    for row in tqdm(values):
+        if row[2] == '':
+            timestamp = row[0]
+            data = row[1]
+            RID = data[:20]
+            payload = data[20:]
+            print(list(RIDdict.keys()))
+            if RID not in list(RIDdict.keys()):
+                RIDdict[RID] = []
+            RIDdict[RID].append([payload, timestamp])
+    UIDdict = processRIDdict(RIDdict)
+    print(UIDdict)
+    for UID in UIDdict.keys():
+        writeToAmzSheet(UIDdict[UID], UID, client)
+
+
+def processRIDdict(RIDdict):
+    RIDs = list(RIDdict.keys())
+    UIDdict = {}
+    for RID in RIDs:
+        rawRow = RIDdict[RID]
+        UID = ""
+        URL = ""
+        Name = ""
+        for element in rawRow:
+            rawElement = element[0]
+            if rawElement[:3] == "UID":
+                UID = rawElement[3:]
+            elif rawElement[:3] == "URL":
+                URL = rawElement[3:]
+            elif rawElement[:4] == "NAME":
+                Name = rawElement[4:]
+        if UID not in UIDdict:
+            UIDdict[UID] = [[element[1],URL, Name]]
+        else:
+            UIDdict[UID].append([element[1],URL,Name])
+    return UIDdict
+
+def writeToAmzSheet(rowList, UID, client):
+    amazonHistorySheet = client.open(UID).get_worksheet(0)
+    for row in rowList:
+        amazonHistorySheet.append_row(row)
 
 def updateUserRecs(UID, client):
     amazonHistorySheet = client.open(UID).get_worksheet(0)
@@ -23,7 +69,7 @@ def updateUserRecs(UID, client):
             newRec = [str(time.time()), "https://www.youtube.com/watch?v="+item['id']['videoId'], rowNum]
         youtubeRecSheet.append_row(newRec)
 
-def main():
+def main2():
     UIDs = ['0001', '0001']
     scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
     creds = ServiceAccountCredentials.from_json_keyfile_name('owner_creds.json', scope)
@@ -31,6 +77,12 @@ def main():
     for UID in tqdm(UIDs):
         #can multithread this if need be
         updateUserRecs(UID, client)
+def main():
+    scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+    creds = ServiceAccountCredentials.from_json_keyfile_name('owner_creds.json', scope)
+    client = gspread.authorize(creds)
+    updateAmzHistory(client)
+
 
 if __name__ == '__main__':
     main()
