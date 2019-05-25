@@ -1,82 +1,156 @@
 
+/* check for url changes */
+// store url on load
+var currentPage = window.location.href;
+
+// listen for changes
+setInterval(function()
+{
+    if (currentPage != window.location.href)
+    {
+        // page has changed, set new page as 'current'
+        currentPage = window.location.href;
+
+        // do your thing...
+        console.log('url has changed');
+        //location.reload(true);
+    }
+}, 500);
+
+
+/* check for target elements' existence. waits a calibrated amount to alter stuff */
 
 var init_observer = new MutationObserver(function(mutations){
   for (var i=0; i < mutations.length; i++){
     for (var j=0; j < mutations[i].addedNodes.length; j++){
-      checkNode(mutations[i].addedNodes[j], j);
-      // do any manipulation necessary to each as it loads (for uniformity). check its index for different behavior?
-      // issue: i want to selectively replace normal videos w a product video
-        //tentative idea: pass in array of product video details, pass in list of indices of og videos we want replaced
-        //  in checkNodes, if the index is one to be replaced, replace its info.
+      checkNode(mutations[i].addedNodes[j]);
     }
   }
-
 });
+
 
 init_observer.observe(document.documentElement, {
   childList: true,
-  subtree: true
+  subtree: true,
 });
 
 
-checkNode = function(addedNode, index) {
-  if (addedNode.nodeType === 1){
+checkNode = function(addedNode) {
+    if (addedNode.nodeType === 1){
+    // if (addedNode.matches('.style-scope.ytd-watch-next-secondary-results-renderer')) {
+    //  console.log(addedNode);
+    //  index = [].indexOf.call(addedNode.parentNode.children, addedNode);
+    //  console.log(index);
+    // }
 
-    //put a bunch of if statements in?
+        if (addedNode.matches("ytd-moving-thumbnail-renderer")) {
+            console.log("hover has loaded");
+            console.log(addedNode);
+            addedNode.remove();
+            // console.log(addedNode.parentElement);
+            // addedNode.parentElement.remove();
 
-    if (addedNode.matches('.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail')){
-    	console.log("this simple thumbnail has initialized");
-    	console.log(addedNode);
-      console.log("child " + index + " of its parent");
-      //addedNode.href = "hello";
+        } else if (addedNode.matches('#thumbnail #img')) {
+            console.log("this simple thumbnail has initialized");
+            console.log(addedNode);
 
+
+            index = get_node_index(addedNode);
+
+
+            if (index !== null && (0 < index) && (index < 4)) {
+              console.log('index is between 0 and 4');
+              overlays = addedNode.querySelector('#overlays');
+              console.log(overlays);
+            }
+
+            /* check metadata */
+        } 
+
+        // if (addedNode.matches('#thumbnail #overlays')) {
+        //     console.log(addedNode);
+        // } 
+
+
+        if (addedNode.matches(".yt-simple-endpoint.style-scope.ytd-compact-video-renderer")) {
+            var tag = generate_watch_tag(rec_details['videoId']);
+            console.log(tag);
+
+            addedNode.setAttribute('href', tag);
+            //console.log(addedNode.querySelector("#video-title"))
+            // addedNode.setAttribute(href,tag);
+            // title = addedNode;
+            // title.setAttribute('title', rec_details['title']);
+            // title.innerHTML = rec_details['title'];
+        } 
+
+        if (addedNode.matches('.yt-simple-endpoint.style-scope.ytd-compact-radio-renderer')) {
+            // index = get_node_index(addedNode);
+            
+            // if (index !== null && (0 < index) && (index < 4)) {
+            //   console.log(addedNode);
+            // }
+
+            console.log(addedNode);
+
+        }
     }
-
-    else if (addedNode.matches('#related #items #dismissable #thumbnail')) {
-    	console.log("moving thumbnail has rendered");
-    	//set or disable moving thumbnail
-      addedNode.src = "";
-      console.log(addedNode);
-
-    }
-  }
 }
 
-// var foo = document.querySelector("#related #items #dismissable .yt-simple-endpoint.style-scope.ytd-compact-video-renderer");
-
-// var change_observer = new MutationObserver(function(mutations){
-//   // for (var i=0; i < mutations.length; i++){
-//   //   for (var j=0; j < mutations[i].addedNodes.length; j++){
-//   //     checkNodeB(mutations[i].addedNodes[j]);
-//   //   }
-//   // }
-// 	mutations.forEach(function(mutation) {
-// 	  console.log(mutation.attributeName + ' changed from ' +
-// 	              '"' + mutation.oldValue + '" to "' +
-// 	              mutation.target.getAttribute(mutation.attributeName) + '"');
-// 	});
-// });
-
-// change_observer.observe(foo, {
-//   attributes: true,
-//   attributeOldValue: true
-// });
+        // overlay = addedNode.querySelector("overlays");
+        // console.log(overlay);
 
 
-// checkNodeB = function(addedNode) {
-//   if (addedNode.nodeType === 1 && addedNode.className === 'yt-simple-endpoint style-scope ytd-compact-video-renderer'){
-//     //addedNode.src = optimizeSrc(addedNode.src)
-//     console.log('change detected');
-//   }
-// }
+//MutationRecord.addedNodes
+// #thumbnail.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail
+//.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail
 
-// optimizeSrc = function(src) {
-//   console.log("optimizeSrc");
-// }
+/* tools */
+function generate_watch_tag(vidId) {
+    tag = '/watch?v=' + vidId;
+    //console.log(tag);
+    return tag
+};
 
+function change_thumbnail() {
 
-// function set_var() {
-// 	var videos = document.querySelector("#related #items #dismissable");
-// 	var foo = document.querySelector("#related #items #dismissable .yt-simple-endpoint.style-scope.ytd-compact-video-renderer");
+}
 
-// }
+function get_node_index(addedNode) {
+  box = addedNode.closest('.style-scope.ytd-watch-next-secondary-results-renderer');
+  console.log(box);
+
+  var index;
+
+  if (box !== null){
+    index = [].indexOf.call(box.parentNode.children, box);
+    console.log(index);
+  }
+
+  return index;
+}
+
+/* sample data */
+
+var rec_details = {
+  'title': 'CATS will make you LAUGH YOUR HEAD OFF - Funny CAT compilation',
+  'channelTitle': 'Tiger FunnyWorks',
+  'videoId': 'hY7m5jjJ9mM',
+  'thumbnails': {
+    'default': {
+        'url': 'https://i.ytimg.com/vi/hY7m5jjJ9mM/default.jpg',
+        'width': 120,
+        'height': 90
+    }, 
+    'medium': {
+        'url': 'https://i.ytimg.com/vi/hY7m5jjJ9mM/mqdefault.jpg',
+        'width': 320,
+        'height': 180
+    },
+    'high': {
+        'url': 'https://i.ytimg.com/vi/hY7m5jjJ9mM/hqdefault.jpg',
+        'width': 480,
+        'height': 360
+    }
+  }
+};
