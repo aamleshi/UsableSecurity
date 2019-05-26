@@ -1,8 +1,6 @@
 
-/* check for url changes */
-// store url on load
+/* reload page */
 var currentPage = window.location.href;
-
 // listen for changes
 setInterval(function()
 {
@@ -18,103 +16,8 @@ setInterval(function()
 }, 500);
 
 
-/* check for target elements' existence. waits a calibrated amount to alter stuff */
-
-var init_observer = new MutationObserver(function(mutations){
-  for (var i=0; i < mutations.length; i++){
-    for (var j=0; j < mutations[i].addedNodes.length; j++){
-      checkNode(mutations[i].addedNodes[j]);
-    }
-  }
-});
-
-
-init_observer.observe(document.documentElement, {
-  childList: true,
-  subtree: true,
-});
-
-
-checkNode = function(addedNode) {
-    if (addedNode.nodeType === 1){
-    // if (addedNode.matches('.style-scope.ytd-watch-next-secondary-results-renderer')) {
-    //  console.log(addedNode);
-    //  index = [].indexOf.call(addedNode.parentNode.children, addedNode);
-    //  console.log(index);
-    // }
-
-        if (addedNode.matches("ytd-moving-thumbnail-renderer")) {
-            console.log("hover has loaded");
-            console.log(addedNode);
-            addedNode.remove();
-            // console.log(addedNode.parentElement);
-            // addedNode.parentElement.remove();
-
-        } else if (addedNode.matches('#thumbnail #img')) {
-            console.log("this simple thumbnail has initialized");
-            console.log(addedNode);
-
-
-            index = get_node_index(addedNode);
-
-
-            if (index !== null && (0 < index) && (index < 4)) {
-              console.log('index is between 0 and 4');
-              overlays = addedNode.querySelector('#overlays');
-              console.log(overlays);
-            }
-
-            /* check metadata */
-        } 
-
-        // if (addedNode.matches('#thumbnail #overlays')) {
-        //     console.log(addedNode);
-        // } 
-
-
-        if (addedNode.matches(".yt-simple-endpoint.style-scope.ytd-compact-video-renderer")) {
-            var tag = generate_watch_tag(rec_details['videoId']);
-            console.log(tag);
-
-            addedNode.setAttribute('href', tag);
-            //console.log(addedNode.querySelector("#video-title"))
-            // addedNode.setAttribute(href,tag);
-            // title = addedNode;
-            // title.setAttribute('title', rec_details['title']);
-            // title.innerHTML = rec_details['title'];
-        } 
-
-        if (addedNode.matches('.yt-simple-endpoint.style-scope.ytd-compact-radio-renderer')) {
-            // index = get_node_index(addedNode);
-            
-            // if (index !== null && (0 < index) && (index < 4)) {
-            //   console.log(addedNode);
-            // }
-
-            console.log(addedNode);
-
-        }
-    }
-}
-
-        // overlay = addedNode.querySelector("overlays");
-        // console.log(overlay);
-
-
-//MutationRecord.addedNodes
-// #thumbnail.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail
-//.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail
-
-/* tools */
-function generate_watch_tag(vidId) {
-    tag = '/watch?v=' + vidId;
-    //console.log(tag);
-    return tag
-};
-
-function change_thumbnail() {
-
-}
+/* helpers */
+var thumbnail_img_idx = [];
 
 function get_node_index(addedNode) {
   box = addedNode.closest('.style-scope.ytd-watch-next-secondary-results-renderer');
@@ -130,27 +33,85 @@ function get_node_index(addedNode) {
   return index;
 }
 
-/* sample data */
 
-var rec_details = {
-  'title': 'CATS will make you LAUGH YOUR HEAD OFF - Funny CAT compilation',
-  'channelTitle': 'Tiger FunnyWorks',
-  'videoId': 'hY7m5jjJ9mM',
-  'thumbnails': {
-    'default': {
-        'url': 'https://i.ytimg.com/vi/hY7m5jjJ9mM/default.jpg',
-        'width': 120,
-        'height': 90
-    }, 
-    'medium': {
-        'url': 'https://i.ytimg.com/vi/hY7m5jjJ9mM/mqdefault.jpg',
-        'width': 320,
-        'height': 180
-    },
-    'high': {
-        'url': 'https://i.ytimg.com/vi/hY7m5jjJ9mM/hqdefault.jpg',
-        'width': 480,
-        'height': 360
+// Define callback function to get notified on changes
+function thumbnail_callback(array) {
+    // do something
+  alert('thumbnail callback');
+  console.log('callback');
+
+
+    // Simulate a code delay
+  setTimeout( function(){
+    console.log('hello');
+
+    random_index = Math.floor(Math.random() * (3) + 1);
+    img = document.querySelectorAll('#thumbnail #img')[random_index];
+    img.setAttribute('src', 'https://i.ytimg.com/vi/hY7m5jjJ9mM/default.jpg');
+
+    console.log(img);
+
+  }, 500 );
+
+
+  // console.log(videos.length);
+  //console.log(videos);
+}
+
+
+/* check for target elements' existence. waits a calibrated amount to alter stuff */
+var init_observer = new MutationObserver(function(mutations){
+  for (var i=0; i < mutations.length; i++){
+    for (var j=0; j < mutations[i].addedNodes.length; j++){
+      checkNode(mutations[i].addedNodes[j]);
     }
   }
-};
+});
+
+
+init_observer.observe(document.documentElement, {
+  childList: true,
+  subtree: true,
+});
+
+
+
+function checkNode(addedNode) {
+  if (addedNode.nodeType === 1){
+
+    if (addedNode.matches("ytd-moving-thumbnail-renderer")) {
+      console.log("hover has loaded");
+      console.log(addedNode);
+      addedNode.remove();
+    // console.log(addedNode.parentElement);
+    // addedNode.parentElement.remove();
+
+    } 
+
+    if (addedNode.matches('#thumbnail #img')) {
+      console.log("this simple thumbnail has initialized");
+      console.log(addedNode);
+
+      index = get_node_index(addedNode);
+
+      if (index !== null && (0 < index) && (index < 4)) {
+        thumbnail_img_idx.push(index);
+        // console.log(thumbnail_img_idx);
+        // resetTimer();
+        if (thumbnail_img_idx.length === 3) {
+          alert('thumbnails ready');
+          console.log(thumbnail_img_idx);
+          thumbnail_callback(thumbnail_img_idx);
+        }
+      }
+    }
+      
+  }
+}
+
+// if (thumbnails_ready === true) {
+//   alert('true');
+//   videos = videos = document.querySelector('.style-scope.ytd-watch-next-secondary-results-renderer').children;
+//   // console.log(videos.length);
+//    console.log(videos);
+// }
