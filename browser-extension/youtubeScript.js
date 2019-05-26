@@ -200,8 +200,6 @@ function change_title() {
         console.log(metadata);
         metadata.innerText = "Recommended for you";
 
-
-ytd-video-meta-block
       }, 1000);
 }
 
