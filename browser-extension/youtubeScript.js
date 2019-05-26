@@ -159,7 +159,7 @@ function checkNode(addedNode) {
         title_href_count++;
 
         if (title_href_count === 3) {
-          console.log('changing title and src')
+          console.log('changing title and metadata')
           change_title();
         }
       }
@@ -173,16 +173,36 @@ function checkNode(addedNode) {
 
 function change_title() {
       setTimeout(function(){
-        console.log('changing title href');
+
+        console.log('changing title and href');
 
         tag = generate_watch_tag('hY7m5jjJ9mM');        
         div = document.querySelectorAll('.yt-simple-endpoint.style-scope.ytd-compact-video-renderer')[random_index];
         console.log(div);
         div.setAttribute('href', tag);
 
+        // change video title
+        title = div.querySelector('#video-title');
+        title.setAttribute('title', rec_details['title']);
+        title.innerHTML = rec_details['title'];
+        console.log(title)
+
+        //remove badge renderer
+        badge = div.querySelector('ytd-badge-supported-renderer');
+        console.log(badge);
+        badge.remove();
+
+        channel = div.querySelector('yt-formatted-string');
+        channel.setAttribute('title', rec_details['channelTitle']);
+        channel.innerHTML = rec_details['channelTitle'];
+
+        metadata = div.querySelector('#metadata-line span');
+        console.log(metadata);
+        metadata.innerText = "Recommended for you";
 
 
-      }, 5000);
+ytd-video-meta-block
+      }, 1000);
 }
 
 
@@ -192,3 +212,30 @@ function change_title() {
 //   // console.log(videos.length);
 //    console.log(videos);
 // }
+
+
+
+/* sample data */
+
+var rec_details = {
+  'title': 'CATS will make you LAUGH YOUR HEAD OFF - Funny CAT compilation',
+  'channelTitle': 'Tiger FunnyWorks',
+  'videoId': 'hY7m5jjJ9mM',
+  'thumbnails': {
+    'default': {
+        'url': 'https://i.ytimg.com/vi/hY7m5jjJ9mM/default.jpg',
+        'width': 120,
+        'height': 90
+    }, 
+    'medium': {
+        'url': 'https://i.ytimg.com/vi/hY7m5jjJ9mM/mqdefault.jpg',
+        'width': 320,
+        'height': 180
+    },
+    'high': {
+        'url': 'https://i.ytimg.com/vi/hY7m5jjJ9mM/hqdefault.jpg',
+        'width': 480,
+        'height': 360
+    }
+  }
+};
