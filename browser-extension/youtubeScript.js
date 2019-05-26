@@ -1,7 +1,7 @@
 
 /* reload page */
 var currentPage = window.location.href;
-// listen for changes
+//listen for changes
 setInterval(function()
 {
     if (currentPage != window.location.href)
@@ -11,9 +11,10 @@ setInterval(function()
 
         // do your thing...
         console.log('url has changed');
-        //location.reload(true);
+        location.reload(true);
     }
 }, 500);
+
 
 
 /* helpers */
@@ -51,7 +52,7 @@ function thumbnail_callback(array) {
 
     console.log(img);
 
-  }, 500 );
+  }, 1000);
 
 
   // console.log(videos.length);
