@@ -1,16 +1,54 @@
-var time;
-var last_send;
-if (chrome.storage.local.get("cul_time", function(data) {
-	if (data.cul_time == null){
-		chrome.storage.local.set({"cul_time": 0});
-	}
+chrome.storage.local.get("time", function(data) {
+	if (!data.time) {
+		chrome.storage.local.set({"time": 0}, function() {
+			console.log("cool");
+		});
+		}
 });
+
+/*(chrome.storage.local.set({"time": 0}, function(data) {
+	console.log("hi");
+})); */
+
+
+chrome.storage.local.get("cul_time", function(data) {
+	if (!data.cul_time) {
+		chrome.storage.local.set({"cul_time": 0}, function() {
+			console.log("cool");
+		});
+		}
+});
+
+/*(chrome.storage.local.set({"cul_time": 0}, function(data) {
+	console.log("hi");
+})); */
+
+var now = new Date();
+
+chrome.storage.local.get("last_send", function(data) {
+	if (!data.last_send) {
+		chrome.storage.local.set({"last_send": new Date(now.getFullYear(), now.getMonth(), now.getDate()-1, 24, 0, 0, 0).getTime()}, function() {
+			console.log("cool");
+		});
+		}
+});
+
+/*(chrome.storage.local.set({"last_send": new Date(now.getFullYear(), now.getMonth(), now.getDate()-1, 24, 0, 0, 0).getTime()}, function(data) {
+	console.log("hi");
+})); */
+
+
 
 chrome.runtime.onMessage.addListener (
 function handleMessage(request, sender, sendResponse) {
 	if (sender.tab.url.split(".")[1] === "youtube") {
 		chrome.storage.local.get("cul_time", function(data) {
-			time = parseInt(request.greeting, 10) - parseInt(data.cul_time, 10);
+			chrome.storage.local.set({"time": parseInt(request.greeting, 10) - parseInt(data.cul_time, 10)}, function() {
+				console.log("hi");
+			});
+		});
+		chrome.storage.local.get("cul_time", function(data) {
+			console.log(data.cul_time);
 		});
 	}
 	if (sender.tab.url.split(".")[1] === "amazon") {
@@ -30,27 +68,28 @@ function handleMessage(request, sender, sendResponse) {
 
 
 }
-)
+);
 
 function send_data() {
-	if (typeof time === 'undefined') {
-		// send 0 time watched to google sheets
-	}
-	else {
-		//send information to google sheets
-		chrome.storage.local.get("cul_time", function(data) {
-			var temp = parseInt(data.cul_time, 10) + time;
-			chrome.storage.local.set({"cul_time": temp});
+	chrome.storage.local.get("cul_time", function(data) {
+		chrome.storage.local.get("time", function(data2) {
+			var temp = parseInt(data2.time, 10) + parseInt(data.cul_time, 10);
+			chrome.storage.local.set({"cul_time": temp}, function(data) {
+				console.log("HELLO");
+			});
+
 		});
-	}
-	var last_send = new Date();
+});
+chrome.storage.local.set({"last_send": Date.now()}, function(data) {
+	console.log("hiya");
+});
 }
 
-var now = new Date();
 var millisTill10 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0, 0) - now;
-if (typeof last_send !== "undefined") {
-     if (now - last_send > 86400000) {
-     	send_data();
-     } // it's been more than 24 hours since the last send
-}
-setTimeout(send_data(), millisTill10);
+chrome.storage.local.get("last_send", function(data) {
+	if (now - data.last_send > 86400000) {
+		send_data();
+	}
+});
+
+setTimeout(send_data, millisTill10);
