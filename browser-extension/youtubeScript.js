@@ -1,5 +1,10 @@
-//global variable
+//global variables
 var random_index = gen_random_index();
+var slots_count = 0;
+var thumbnail_src_idx = 0;
+var title_href_count = 0;
+var metadata_count = 0;
+
 //alert('index is ' + random_index)
 
 function gen_random_index() {
@@ -20,6 +25,11 @@ setInterval(function()
       console.log('url has changed');
       location.reload(true);
       random_index = gen_random_index();
+      slots_count = 0;
+      thumbnail_src_idx = 0;
+      title_href_count = 0;
+      metadata_count = 0;
+
       //alert('index is ' + random_index)
   }
 }, 500);
@@ -27,9 +37,6 @@ setInterval(function()
 
 
 /* helpers */
-var thumbnail_img_idx = [];
-var thumbnail_src_idx = 0;
-var title_href_count = 0;
 
 function get_node_index(addedNode) {
   box = addedNode.closest('.style-scope.ytd-watch-next-secondary-results-renderer');
@@ -53,30 +60,6 @@ function generate_watch_tag(vidId) {
 
 
 
-// Define callback function to get notified on changes
-function thumbnail_callback() {
-    // do something
-  //alert('thumbnail callback');
-  console.log('callback');
-
-
-    // Simulate a code delay
-  setTimeout( function(){
-    console.log('hello');
-    //console.log(img);
-
-    img = document.querySelectorAll('#thumbnail #img')[random_index];
-    console.log(img);
-    img.setAttribute('src', 'https://i.ytimg.com/vi/hY7m5jjJ9mM/default.jpg');
-
-    console.log(img);
-
-  }, 1000);
-
-
-}
-
-
 /* check for target elements' existence. waits a calibrated amount to alter stuff */
 var init_observer = new MutationObserver(function(mutations){
   for (var i=0; i < mutations.length; i++){
@@ -97,38 +80,38 @@ init_observer.observe(document.documentElement, {
 function checkNode(addedNode) {
   if (addedNode.nodeType === 1){
 
+    // remove hover functionality of all videos
     if (addedNode.matches("ytd-moving-thumbnail-renderer")) {
       console.log("hover has loaded");
       console.log(addedNode);
       addedNode.remove();
-    // console.log(addedNode.parentElement);
-    // addedNode.parentElement.remove();
-
     } 
 
-    if (addedNode.matches('#thumbnail #img')) {
+    // detect and change the thumbnail image
+    if (addedNode.matches('ytd-compact-video-renderer #thumbnail #img')) {
       console.log("this simple thumbnail has initialized");
       console.log(addedNode);
 
       index = get_node_index(addedNode);
 
-      if (index !== null && (0 < index) && (index < 4)) {
-        thumbnail_img_idx.push(index);
+      if (index !== null && (0 < index) && (index < 6)) {
+        slots_count++;
+        console.log(slots_count);
         // console.log(thumbnail_img_idx);
         // resetTimer();
-        if (thumbnail_img_idx.length === 3) {
+        if (slots_count === 3) {
           //alert('thumbnails ready');
-          console.log(thumbnail_img_idx);
-          thumbnail_callback();
+          change_thumbnail(random_index);
         }
       }
     }
 
-    if (addedNode.matches('.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail')) {
+    // detect and change href of thumbnail. could potentially be bundled in with thumbnail image change.
+    if (addedNode.matches('ytd-compact-video-renderer .yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail')) {
       //console.log(addedNode);
 
       index = get_node_index(addedNode);
-      if (index !== null && (0 < index) && (index < 4)) { 
+      if (index !== null && (0 < index) && (index < 6)) { 
         thumbnail_src_idx++;
 
         //thumbnail src callback
@@ -137,7 +120,7 @@ function checkNode(addedNode) {
               console.log('changing thumbnail href');
               tag = generate_watch_tag('hY7m5jjJ9mM');
 
-              div = document.querySelectorAll('.yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail')[random_index];
+              div = document.querySelectorAll('ytd-compact-video-renderer .yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail')[random_index];
               div.setAttribute('href', tag);
 
               //console.log(div);
@@ -148,70 +131,143 @@ function checkNode(addedNode) {
       }
     }
 
-
-    if (addedNode.matches('#dismissable')) {
-      // console.log(addedNode);
-      // console.log(addedNode.querySelector('.yt-simple-endpoint.style-scope.ytd-compact-video-renderer'));
-
+    // detect and change href of video title
+    if (addedNode.matches('ytd-compact-video-renderer #dismissable')) {
       index = get_node_index(addedNode);
       //console.log(index);
-      if (index !== null && (0 < index) && (index < 4)) { 
+      if (index !== null && (0 < index) && (index < 6)) { 
         title_href_count++;
+        metadata_count++;
 
         if (title_href_count === 3) {
-          console.log('changing title and metadata')
-          change_title();
+          console.log('changing title')
+          change_title(random_index);
+        }
+
+        if (metadata_count === 3) {
+          console.log('changing metadata')
+          change_metadata(random_index);
         }
       }
-
     }
+
+    // // detect and change metadata
+    // if (addedNode.matches('ytd-compact-video-renderer ytd-video-meta-block')) {
+
+    //   index = get_node_index(addedNode);
+    //   console.log('metadata index: ' + index);
+    //     if (index !== null && (0 < index) && (index < 6)) { 
+    //       metadata_count++;
+
+    //       if (metadata_count === 3) {
+    //         console.log('changing metadata')
+    //         change_metadata(random_index);
+    //       }
+    //     }
+
+    // }
+
 
 
   }
 }
     //console.log(document.querySelector('.metadata.style-scope.ytd-compact-video-renderer'));
 
-function change_title() {
-      setTimeout(function(){
+// Callback fxn which changes thumbnail after 1 sec delay
+function change_thumbnail(r) {
 
-        console.log('changing title and href');
+  //alert('thumbnail callback');
+  console.log('(change_thumbnail))');
 
-        tag = generate_watch_tag('hY7m5jjJ9mM');        
-        div = document.querySelectorAll('.yt-simple-endpoint.style-scope.ytd-compact-video-renderer')[random_index];
-        console.log(div);
-        div.setAttribute('href', tag);
 
-        // change video title
-        title = div.querySelector('#video-title');
-        title.setAttribute('title', rec_details['title']);
-        title.innerHTML = rec_details['title'];
-        console.log(title)
+    // Simulate a code delay
+  setTimeout( function(){
+    console.log('hello');
+    //console.log(img);
 
-        //remove badge renderer
-        badge = div.querySelector('ytd-badge-supported-renderer');
-        console.log(badge);
-        badge.remove();
+    img = document.querySelectorAll('ytd-compact-video-renderer #thumbnail #img')[r];
+    console.log(img);
+    img.setAttribute('src', 'https://i.ytimg.com/vi/hY7m5jjJ9mM/default.jpg');
+    console.log(img);
 
-        channel = div.querySelector('yt-formatted-string');
-        channel.setAttribute('title', rec_details['channelTitle']);
-        channel.innerHTML = rec_details['channelTitle'];
+    // overlays = img.querySelector('ytd-thumbnail-overlay-side-panel-renderer');
 
-        metadata = div.querySelector('#metadata-line span');
-        console.log(metadata);
-        metadata.innerText = "Recommended for you";
+    // if (overlays != null) {
+    //   overlays.remove();
+    //   console.log('removed overlay');
+    // }
 
-      }, 1000);
+  }, 1000);
+
+
 }
 
 
-// if (thumbnails_ready === true) {
-//   alert('true');
-//   videos = videos = document.querySelector('.style-scope.ytd-watch-next-secondary-results-renderer').children;
-//   // console.log(videos.length);
-//    console.log(videos);
-// }
+function change_title(r) {
+  setTimeout(function(){
+
+//.yt-simple-endpoint.style-scope.ytd-compact-video-renderer
+
+    console.log('(change_title))');
+    console.log(r);
+
+    tag = generate_watch_tag('hY7m5jjJ9mM');        
+    div = document.querySelectorAll('.yt-simple-endpoint.style-scope.ytd-compact-video-renderer')[r];
+
+    console.log(div);
+    div.setAttribute('href', tag);
+
+    // change video title
+    title = div.querySelector('#video-title');
+    title.setAttribute('title', rec_details['title']);
+    title.setAttribute('aria-label', rec_details['title']);
+    title.innerHTML = rec_details['title'];
+    console.log(title)
+
+    // //remove badge renderer
+    // badge = div.querySelector('ytd-badge-supported-renderer');
+    // console.log(badge);
+    // if (badge != null) {
+    //   badge.remove();
+    // }
+
+    // channel = div.querySelector('yt-formatted-string');
+    // channel.setAttribute('title', rec_details['channelTitle']);
+    // channel.innerHTML = rec_details['channelTitle'];
+
+    // metadata = div.querySelector('#metadata-line span');
+    // console.log(metadata);
+    // metadata.innerText = "Recommended for you";
+
+  }, 1000);
+}
 
 
+function change_metadata(r) {
+  setTimeout(function(){
+
+  console.log('changing metadata');
+  div = document.querySelectorAll('ytd-compact-video-renderer .yt-simple-endpoint.style-scope.ytd-compact-video-renderer')[r];
+  console.log(div);
+
+
+  //remove badge renderer
+  badge = div.querySelector('ytd-badge-supported-renderer');
+  console.log(badge);
+  if (badge != null) {
+    badge.remove();
+  }
+
+  channel = div.querySelector('yt-formatted-string');
+  channel.setAttribute('title', rec_details['channelTitle']);
+  channel.innerHTML = rec_details['channelTitle'];
+
+  metadata = div.querySelector('#metadata-line span');
+  console.log(metadata);
+  metadata.innerText = "Recommended for you";
+
+  }, 1000);
+}
 
 /* sample data */
 
