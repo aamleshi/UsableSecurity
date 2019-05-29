@@ -30,3 +30,48 @@ function afterWindowLoaded(){
 
 window.onload = function() {
     alert('Page loaded');}
+
+
+// Takes all changes which haven’t been fired so far.
+// var changes = init_observer.takeRecords();
+// Stops the MutationObserver from listening for changes.
+// init_observer.disconnect();
+
+// var foo = document.querySelector("#related #items #dismissable .yt-simple-endpoint.style-scope.ytd-compact-video-renderer");
+
+// var change_observer = new MutationObserver(function(mutations){
+//   // for (var i=0; i < mutations.length; i++){
+//   //   for (var j=0; j < mutations[i].addedNodes.length; j++){
+//   //     checkNodeB(mutations[i].addedNodes[j]);
+//   //   }
+//   // }
+// 	mutations.forEach(function(mutation) {
+// 	  console.log(mutation.attributeName + ' changed from ' +
+// 	              '"' + mutation.oldValue + '" to "' +
+// 	              mutation.target.getAttribute(mutation.attributeName) + '"');
+// 	});
+// });
+
+// change_observer.observe(foo, {
+//   attributes: true,
+//   attributeOldValue: true
+// });
+
+
+// checkNodeB = function(addedNode) {
+//   if (addedNode.nodeType === 1 && addedNode.className === 'yt-simple-endpoint style-scope ytd-compact-video-renderer'){
+//     //addedNode.src = optimizeSrc(addedNode.src)
+//     console.log('change detected');
+//   }
+// }
+
+// optimizeSrc = function(src) {
+//   console.log("optimizeSrc");
+// }
+
+
+// function set_var() {
+// 	var videos = document.querySelector("#related #items #dismissable");
+// 	var foo = document.querySelector("#related #items #dismissable .yt-simple-endpoint.style-scope.ytd-compact-video-renderer");
+
+// }

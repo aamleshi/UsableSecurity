@@ -5,13 +5,39 @@ var thumbnail_src_idx = 0;
 var title_href_count = 0;
 var metadata_count = 0;
 
-//alert('index is ' + random_index)
 
+/* helpers */
+
+// randomly generate a number from 1 to 3
 function gen_random_index() {
   return Math.floor(Math.random() * 3) + 1;
 }
 
-/* reload page */
+// get index of the video of all suggested videos
+function get_node_index(addedNode) {
+  box = addedNode.closest('.style-scope.ytd-watch-next-secondary-results-renderer');
+  //console.log(box);
+
+  var index;
+
+  if (box !== null){
+    index = [].indexOf.call(box.parentNode.children, box);
+    //console.log('(get_node_index) index: ' + index);
+  }
+
+  return index;
+}
+
+// generate tag for youtube url redirection/referencing
+function generate_watch_tag(vidId) {
+    tag = '/watch?v=' + vidId;
+    //console.log(tag);
+    return tag
+};
+
+/////
+
+/* reload page if url changes */
 var currentPage = window.location.href;
 //listen for changes
 setInterval(function()
@@ -21,7 +47,7 @@ setInterval(function()
       // page has changed, set new page as 'current'
       currentPage = window.location.href;
 
-      // do your thing...
+      // reset global variables and generate new random index for replacement video
       console.log('url has changed');
       location.reload(true);
       random_index = gen_random_index();
@@ -35,32 +61,7 @@ setInterval(function()
 }, 500);
 
 
-
-/* helpers */
-
-function get_node_index(addedNode) {
-  box = addedNode.closest('.style-scope.ytd-watch-next-secondary-results-renderer');
-  //console.log(box);
-
-  var index;
-
-  if (box !== null){
-    index = [].indexOf.call(box.parentNode.children, box);
-    console.log('(get_node_index) index: ' + index);
-  }
-
-  return index;
-}
-
-function generate_watch_tag(vidId) {
-    tag = '/watch?v=' + vidId;
-    //console.log(tag);
-    return tag
-};
-
-
-
-/* check for target elements' existence. waits a calibrated amount to alter stuff */
+// check for target elements' existence. passes to checkNode().
 var init_observer = new MutationObserver(function(mutations){
   for (var i=0; i < mutations.length; i++){
     for (var j=0; j < mutations[i].addedNodes.length; j++){
@@ -70,13 +71,14 @@ var init_observer = new MutationObserver(function(mutations){
 });
 
 
+// set mutation observer named init_observer
 init_observer.observe(document.documentElement, {
   childList: true,
   subtree: true,
 });
 
 
-
+// does different stuff depending on what the node is
 function checkNode(addedNode) {
   if (addedNode.nodeType === 1){
 
@@ -87,10 +89,10 @@ function checkNode(addedNode) {
       addedNode.remove();
     } 
 
-    // detect and change the thumbnail image
+    // detects creation of first 6 video thumbnail images. passes to change_thumbnail()
     if (addedNode.matches('ytd-compact-video-renderer #thumbnail #img')) {
       console.log("this simple thumbnail has initialized");
-      console.log(addedNode);
+      //console.log(addedNode);
 
       index = get_node_index(addedNode);
 
@@ -131,7 +133,7 @@ function checkNode(addedNode) {
       }
     }
 
-    // detect and change href of video title
+    // detects creation of first 6 #dismissable elements
     if (addedNode.matches('ytd-compact-video-renderer #dismissable')) {
       index = get_node_index(addedNode);
       //console.log(index);
@@ -150,24 +152,6 @@ function checkNode(addedNode) {
         }
       }
     }
-
-    // // detect and change metadata
-    // if (addedNode.matches('ytd-compact-video-renderer ytd-video-meta-block')) {
-
-    //   index = get_node_index(addedNode);
-    //   console.log('metadata index: ' + index);
-    //     if (index !== null && (0 < index) && (index < 6)) { 
-    //       metadata_count++;
-
-    //       if (metadata_count === 3) {
-    //         console.log('changing metadata')
-    //         change_metadata(random_index);
-    //       }
-    //     }
-
-    // }
-
-
 
   }
 }
@@ -189,6 +173,9 @@ function change_thumbnail(r) {
     console.log(img);
     img.setAttribute('src', 'https://i.ytimg.com/vi/hY7m5jjJ9mM/default.jpg');
     console.log(img);
+    //img.on('click', function(){console.log('hi')});
+    //.on("click", function(){ myFunction(); });
+    //img.setAttribute('class', 'inline-block style-scope ytd-thumbnail');
 
     // overlays = img.querySelector('ytd-thumbnail-overlay-side-panel-renderer');
 
@@ -197,6 +184,14 @@ function change_thumbnail(r) {
     //   console.log('removed overlay');
     // }
 
+  }, 1000);
+
+
+  setTimeout(function(){
+    div = document.querySelectorAll('#thumbnail')[r];
+    div.setAttribute('class', 'inline-block style-scope ytd-thumbnail');
+    console.log(div);
+    //div.css({"text-decoration":"none"});
   }, 1000);
 
 
@@ -224,23 +219,25 @@ function change_title(r) {
     title.innerHTML = rec_details['title'];
     console.log(title)
 
-    // //remove badge renderer
-    // badge = div.querySelector('ytd-badge-supported-renderer');
-    // console.log(badge);
-    // if (badge != null) {
-    //   badge.remove();
-    // }
+    //remove badge renderer
+    badge = div.querySelector('ytd-badge-supported-renderer');
+    console.log('removing badge');
+    if (badge != null) {
+      badge.remove();
+    }
 
-    // channel = div.querySelector('yt-formatted-string');
-    // channel.setAttribute('title', rec_details['channelTitle']);
-    // channel.innerHTML = rec_details['channelTitle'];
+    //div.setAttribute('class', 'style-scope ytd-compact-video-renderer');
 
-    // metadata = div.querySelector('#metadata-line span');
-    // console.log(metadata);
-    // metadata.innerText = "Recommended for you";
 
   }, 1000);
+
+
+  setTimeout(function(){
+    div = document.querySelectorAll('.yt-simple-endpoint.style-scope.ytd-compact-video-renderer')[r];
+    div.setAttribute('class', 'style-scope ytd-compact-video-renderer');
+  }, 2000);
 }
+
 
 
 function change_metadata(r) {

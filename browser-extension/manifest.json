@@ -11,6 +11,7 @@
       {
         "matches": ["https://*.youtube.com/*"],
         "js": ["youtubeScript.js"],
+        "css": ["underline.css"],
         "run_at": "document_idle"
       }
     ],
