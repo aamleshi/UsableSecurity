@@ -1,3 +1,5 @@
+curr_time = Date.now();
+
 chrome.storage.local.get("time", function(data) {
 	if (!data.time) {
 		chrome.storage.local.set({"time": 0}, function() {
@@ -23,11 +25,11 @@ chrome.storage.local.get("cul_time", function(data) {
 	console.log("hi");
 })); */
 
-var now = new Date();
+var today = new Date();
 
 chrome.storage.local.get("last_send", function(data) {
 	if (!data.last_send) {
-		chrome.storage.local.set({"last_send": new Date(now.getFullYear(), now.getMonth(), now.getDate()-1, 24, 0, 0, 0).getTime()}, function() {
+		chrome.storage.local.set({"last_send": new Date(today.getFullYear(), today.getMonth(), today.getDate()-1, 24, 0, 0, 0).getTime()}, function() {
 			console.log("cool");
 		});
 		}
@@ -83,11 +85,12 @@ function send_data() {
 chrome.storage.local.set({"last_send": Date.now()}, function(data) {
 	console.log("hiya");
 });
+today = new Date();
 }
 
-var millisTill10 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0, 0) - now;
+var millisTill10 = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 24, 0, 0, 0) - today;
 chrome.storage.local.get("last_send", function(data) {
-	if (now - data.last_send > 86400000) {
+	if (curr_time - data.last_send > 86400000) {
 		send_data();
 	}
 });
