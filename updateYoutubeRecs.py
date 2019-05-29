@@ -30,7 +30,7 @@ def updateTime(client):
     for UID in UIDdict.keys():
         writeToAmzSheet(UIDdict[UID], UID, client)
 
-def processRIDdictAMZ(RIDdict):
+def processRIDdictYT(RIDdict):
     RIDs = list(RIDdict.keys())
     UIDdict = {}
     for RID in RIDs:

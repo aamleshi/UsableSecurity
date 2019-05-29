@@ -1,4 +1,20 @@
 curr_time = Date.now();
+UID = "0000";
+
+function sendRequest(url, endpoint, RID, Field, Payload) {
+	var req = endpoint + RID + Field + Payload
+	console.log(req)
+	const Http = new XMLHttpRequest();
+	Http.open("POST", url, true);
+	Http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	Http.send(req);
+	Http.onreadystatechange = (e) => {
+		console.log(Http.responseText)
+
+	}
+}
+
+
 
 chrome.storage.local.get("time", function(data) {
 	if (!data.time) {
@@ -55,26 +71,26 @@ function handleMessage(request, sender, sendResponse) {
 	}
 	if (sender.tab.url.split(".")[1] === "amazon") {
 		//console.log("bye");
-		sendResponse({farewell: "goodbye"});
-    	const Http = new XMLHttpRequest();
-    	var url = 'https://docs.google.com/forms/d/e/1FAIpQLSeoSX4poMzl8lC98pAhjVMHszlmVP2oW3m-DlJB9t8tGCqKHw/formResponse'; 
-    	var req = 'entry.867543096=' + request.greeting;
-    	Http.open("POST", url, true);
-    	Http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    	Http.send(req);
-    	Http.onreadystatechange=(e)=>{
-    	//console.log(Http.responseText)
-
+		console.log(request.greeting);
+		RID = Math.random();
+		var url = 'https://docs.google.com/forms/d/e/1FAIpQLSdi-6HKIh4F-Gd5leRD1eJMkLShzS6jxUyo0Yy61KmaX-ELXA/formResponse';
+		var endpoint = 'entry.1387091585=';
+		sendRequest(url, endpoint, RID, 'NAME', request.PRODUCT);
+		sendRequest(url, endpoint, RID, 'URL', request.URL);
+		sendRequest(url, endpoint, RID, 'UID', UID);
 	}
-	}
-
-
 }
 );
 
 function send_data() {
 	chrome.storage.local.get("cul_time", function(data) {
 		chrome.storage.local.get("time", function(data2) {
+			var dataPacket = parseInt(data2.time, 10);
+			RID = Math.random();
+			var url = 'https://docs.google.com/forms/d/e/13X7mQnEIYCDdTj0EV8zFg3sILpOddTwljr9AkxLpe_I/formResponse';
+			var endpoint = 'entry.520508685=';
+			sendRequest(url, endpoint, RID, 'TIME', dataPacket);
+			sendRequest(url, endpoint, RID, 'UID', UID);
 			var temp = parseInt(data2.time, 10) + parseInt(data.cul_time, 10);
 			chrome.storage.local.set({"cul_time": temp}, function(data) {
 				console.log("HELLO");
@@ -90,7 +106,7 @@ today = new Date();
 
 var millisTill10 = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 24, 0, 0, 0) - today;
 chrome.storage.local.get("last_send", function(data) {
-	if (curr_time - data.last_send > 86400000) {
+	if (Date.now() - data.last_send > 86400000) {
 		send_data();
 	}
 });
