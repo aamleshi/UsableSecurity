@@ -40,8 +40,7 @@ function generate_watch_tag(vidId) {
 /* reload page if url changes */
 var currentPage = window.location.href;
 //listen for changes
-setInterval(function()
-{
+setInterval(function(){
   if (currentPage != window.location.href)
   {
       // page has changed, set new page as 'current'
