@@ -1,3 +1,4 @@
+console.log("Time.js")
 window.localStorage.setItem("start", Date.now());
 
 document.addEventListener("visibilitychange", handleVisibilityChange, true);
