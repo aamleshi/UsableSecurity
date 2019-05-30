@@ -45,7 +45,7 @@ var today = new Date();
 
 chrome.storage.local.get("last_send", function(data) {
 	if (!data.last_send) {
-		chrome.storage.local.set({"last_send": new Date(today.getFullYear(), today.getMonth(), today.getDate()-1, 24, 0, 0, 0).getTime()}, function() {
+		chrome.storage.local.set({"last_send": Date.now()}, function() {
 			console.log("cool");
 		});
 		}
@@ -72,7 +72,7 @@ function handleMessage(request, sender, sendResponse) {
 	if (sender.tab.url.split(".")[1] === "amazon") {
 		//console.log("bye");
 		console.log(request.greeting);
-		RID = Math.random();
+		RID = Math.floor(Math.random()*90000) + 10000;
 		var url = 'https://docs.google.com/forms/d/e/1FAIpQLSdi-6HKIh4F-Gd5leRD1eJMkLShzS6jxUyo0Yy61KmaX-ELXA/formResponse';
 		var endpoint = 'entry.1387091585=';
 		sendRequest(url, endpoint, RID, 'NAME', request.PRODUCT);
@@ -86,8 +86,8 @@ function send_data() {
 	chrome.storage.local.get("cul_time", function(data) {
 		chrome.storage.local.get("time", function(data2) {
 			var dataPacket = parseInt(data2.time, 10);
-			RID = Math.random();
-			var url = 'https://docs.google.com/forms/d/e/13X7mQnEIYCDdTj0EV8zFg3sILpOddTwljr9AkxLpe_I/formResponse';
+			RID = Math.floor(Math.random()*90000) + 10000;
+			var url = 'https://docs.google.com/forms/d/e/1FAIpQLSeqLlkHDjfZj3EBIZWuHkONTKDlKFqJmcLVSWDQzMywHLZQPg/formResponse';
 			var endpoint = 'entry.520508685=';
 			sendRequest(url, endpoint, RID, 'TIME', dataPacket);
 			sendRequest(url, endpoint, RID, 'UID', UID);
@@ -101,14 +101,18 @@ function send_data() {
 chrome.storage.local.set({"last_send": Date.now()}, function(data) {
 	console.log("hiya");
 });
-today = new Date();
+// today = new Date();
 }
 
-var millisTill10 = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 24, 0, 0, 0) - today;
+
+//var millisTill10 = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 39, 0, 0) - today;
+
+setInterval (function () {
+
 chrome.storage.local.get("last_send", function(data) {
-	if (Date.now() - data.last_send > 86400000) {
+	if (Date.now() - data.last_send > 1000*60*10) {//1000*60*60*3) {
 		send_data();
 	}
 });
-
-setTimeout(send_data, millisTill10);
+}, 1000*60)
+//setTimeout(send_data, millisTill10);

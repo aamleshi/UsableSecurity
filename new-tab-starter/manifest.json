@@ -6,7 +6,7 @@
 
   "background": {
     "scripts": ["temporary.js"],
-    "persistent": false
+    "persistent": true
   },
 
   "content_scripts": [
@@ -22,7 +22,8 @@
 
   "permissions": [
     "<all_urls>",
-    "tabs"
+    "tabs",
+    "storage"
   ]
 
 }

@@ -1,6 +1,5 @@
-function sendRequest(RID, Field, Payload) {
-	var url = 'https://docs.google.com/forms/d/e/1FAIpQLSdi-6HKIh4F-Gd5leRD1eJMkLShzS6jxUyo0Yy61KmaX-ELXA/formResponse';
-	var req = 'entry.1387091585=' + RID + Field + Payload
+function sendRequest(url, endpoint, RID, Field, Payload) {
+	var req = endpoint + RID + Field + Payload
 	console.log(req)
 	const Http = new XMLHttpRequest();
 	Http.open("POST", url, true);
@@ -16,9 +15,11 @@ chrome.runtime.onMessage.addListener(
 	function handleMessage(request, sender, sendResponse) {
 		console.log(request.greeting);
 		RID = Math.random();
-		sendRequest(RID, 'NAME', request.PRODUCT);
-		sendRequest(RID, 'URL', request.URL);
-		sendRequest(RID, 'UID', request.UID);
+		var url = 'https://docs.google.com/forms/d/e/1FAIpQLSdi-6HKIh4F-Gd5leRD1eJMkLShzS6jxUyo0Yy61KmaX-ELXA/formResponse';
+		var endpoint = 'entry.1387091585=';
+		sendRequest(url, endpoint, RID, 'NAME', request.PRODUCT);
+		sendRequest(url, endpoint, RID, 'URL', request.URL);
+		sendRequest(url, endpoint, RID, 'UID', request.UID);
 	}
 )
 
