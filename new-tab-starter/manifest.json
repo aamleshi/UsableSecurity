@@ -5,7 +5,7 @@
   "description": "",
 
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["temporary.js"],
     "persistent": false
   },
 
@@ -13,7 +13,11 @@
   {
       "matches": ["*://*.amazon.com/*"],
       "js": ["Search.js"]
-  }
+  },
+  {
+    "matches": ["*://*.youtube.com/*"],
+    "js": ["Time.js"]
+}
   ],
 
   "permissions": [
