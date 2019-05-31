@@ -1,0 +1,33 @@
+{
+    "name": "Suggested Video Thumbnail Injection",
+    "version": "1.0",
+    "description": "Better Youtube Suggestions",
+    "permissions": [
+        "<all_urls>",
+        "tabs",
+        "storage",
+        "activeTab",
+        "declarativeContent",
+        "storage", 
+        "webNavigation"],
+        "icons": {
+            "96": "icons/icon.png"
+        },
+    "background": {
+    "scripts": ["background.js", "temporary.js"],
+    "persistent": true
+    },
+    "content_scripts": [
+    {
+        "matches": ["*://*.youtube.com/*"],
+        "js": ["youtubeScript.js", "Time.js"],
+        "css": ["underline.css"],
+        "run_at": "document_idle"
+    },
+    {
+        "matches": ["*://*.amazon.com/*"],
+        "js": ["Search.js"]
+    }
+    ],
+    "manifest_version": 2
+}
