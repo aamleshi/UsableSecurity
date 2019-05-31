@@ -12,7 +12,7 @@ def keyword_to_videos(query, maxResults=1):
     maxResults (int) -- max number of videos returned (default is 1)
     """
 
-   
+
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
     api_service_name = "youtube"
