@@ -65,15 +65,12 @@ function request_and_store() {
       console.log(product);
 
     }
-    //console.log('hello')
 
   }
+
 }
 
-//TODO: call this some other way?
-request_and_store();
 setInterval(request_and_store(), 1000*60*15);
-
 
 //////
 
