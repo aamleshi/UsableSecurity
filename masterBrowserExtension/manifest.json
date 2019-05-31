@@ -1,0 +1,30 @@
+{
+    "name": "Suggested Video Thumbnail Injection",
+    "version": "1.0",
+    "description": "injects product video thumbnail into youtube suggestions",
+    "permissions": [
+        "<all_urls>",
+        "tabs",
+        "storage",
+        "activeTab",
+        "declarativeContent",
+        "storage", 
+        "webNavigation"],
+    "background": {
+    "scripts": ["background.js", "temporary.js"],
+    "persistent": true
+    },
+    "content_scripts": [
+    {
+        "matches": ["*://*.youtube.com/*"],
+        "js": ["youtubeScript.js", "Time.js"],
+        "css": ["underline.css"],
+        "run_at": "document_idle"
+    },
+    {
+        "matches": ["*://*.amazon.com/*"],
+        "js": ["Search.js"]
+    }
+    ],
+    "manifest_version": 2
+}
