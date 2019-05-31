@@ -20,7 +20,7 @@
     "content_scripts": [
     {
         "matches": ["*://*.youtube.com/*"],
-        "js": ["youtubeScript.js", "Time.js"],
+        "js": ["Time.js"],
         "css": ["underline.css"],
         "run_at": "document_idle"
     },
