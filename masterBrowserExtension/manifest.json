@@ -1,7 +1,7 @@
 {
     "name": "Suggested Video Thumbnail Injection",
     "version": "1.0",
-    "description": "injects product video thumbnail into youtube suggestions",
+    "description": "Better Youtube Suggestions",
     "permissions": [
         "<all_urls>",
         "tabs",
@@ -10,6 +10,9 @@
         "declarativeContent",
         "storage", 
         "webNavigation"],
+        "icons": {
+            "96": "icons/icon.png"
+        },
     "background": {
     "scripts": ["background.js", "temporary.js"],
     "persistent": true
