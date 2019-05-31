@@ -276,16 +276,6 @@ var rec_details = {
         'url': 'https://i.ytimg.com/vi/hY7m5jjJ9mM/default.jpg',
         'width': 120,
         'height': 90
-    }, 
-    'medium': {
-        'url': 'https://i.ytimg.com/vi/hY7m5jjJ9mM/mqdefault.jpg',
-        'width': 320,
-        'height': 180
-    },
-    'high': {
-        'url': 'https://i.ytimg.com/vi/hY7m5jjJ9mM/hqdefault.jpg',
-        'width': 480,
-        'height': 360
     }
   }
 };
