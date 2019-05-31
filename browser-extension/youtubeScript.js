@@ -6,6 +6,7 @@ var thumbnail_src_idx = 0;
 var title_href_count = 0;
 var metadata_count = 0;
 var response = [];
+var uID = '1ohJUvjXG3Fd8xOmC0MNE8qI3-lb-CBd43PvfiFMF3Ak';
 
 /* helpers */
 // randomly generate a number from 1 to 3
@@ -36,11 +37,11 @@ function generate_watch_tag(vidId) {
     return tag
 };
 
-//TODO: PARSING & STORING FIRES TWICE
+
 /* get 5 recs from google sheet, sets 1 rec at random in local storage */
 function request_and_store() {
   const Http = new XMLHttpRequest();
-  const url='https://docs.google.com/spreadsheets/d/1ohJUvjXG3Fd8xOmC0MNE8qI3-lb-CBd43PvfiFMF3Ak/export?gid=0&format=csv';
+  var url='https://docs.google.com/spreadsheets/d/'+ uID + '/export?gid=0&format=csv';
   Http.open("GET", url);
   Http.send();
 
