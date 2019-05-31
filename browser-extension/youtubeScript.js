@@ -1,16 +1,17 @@
 //global variables
-var random_index = gen_random_index();
+var yt_index = gen_random_index(1,3);
+var rec_index = gen_random_index(1,6);
 var slots_count = 0;
 var thumbnail_src_idx = 0;
 var title_href_count = 0;
 var metadata_count = 0;
-
+var response = [];
 
 /* helpers */
-
 // randomly generate a number from 1 to 3
-function gen_random_index() {
-  return Math.floor(Math.random() * 3) + 1;
+function gen_random_index(low, high) {
+  //return Math.floor(Math.random() * 3) + 1;
+  return Math.floor(Math.random() * (1 + high - low)) + low;
 }
 
 // get index of the video of all suggested videos
@@ -35,9 +36,49 @@ function generate_watch_tag(vidId) {
     return tag
 };
 
-/////
+//TODO: PARSING & STORING FIRES TWICE
+/* get 5 recs from google sheet, sets 1 rec at random in local storage */
+function request_and_store() {
+  const Http = new XMLHttpRequest();
+  const url='https://docs.google.com/spreadsheets/d/1ohJUvjXG3Fd8xOmC0MNE8qI3-lb-CBd43PvfiFMF3Ak/export?gid=0&format=csv';
+  Http.open("GET", url);
+  Http.send();
 
-/* reload page if url changes */
+  Http.onreadystatechange = (e) => {
+
+    if(Http.readyState === 4 && Http.status === 200) {
+      response = Http.responseText.split(/\r?\n/);
+      // console.log(response);
+      //console.log('product: ' + response[rec_index]);
+      // console.log(response[rec_index].split(','));
+      rec = response[rec_index].split(',');
+      keys = response[0].split(',');
+
+      for (var i=0; i < keys.length; i++) {
+        key = keys[i];
+        val = rec[i];
+        window.localStorage.setItem(key, val);
+        console.log('key: ' + keys[i] + ' val: ' + rec[i]);
+      }
+      //console.log('hi')
+      product = window.localStorage.getItem('title');
+      console.log(product);
+
+    }
+    //console.log('hello')
+
+  }
+}
+
+//TODO: call this some other way?
+request_and_store();
+setInterval(request_and_store(), 1000*60*15);
+
+
+//////
+
+
+/* reload page if url changes, and reset flags */
 var currentPage = window.location.href;
 //listen for changes
 setInterval(function(){
@@ -49,18 +90,19 @@ setInterval(function(){
       // reset global variables and generate new random index for replacement video
       console.log('url has changed');
       location.reload(true);
-      random_index = gen_random_index();
+      yt_index = gen_random_index(1,3);
+      rec_index = gen_random_index(1,6);
       slots_count = 0;
       thumbnail_src_idx = 0;
       title_href_count = 0;
       metadata_count = 0;
+      response = [];
 
-      //alert('index is ' + random_index)
   }
 }, 500);
 
 
-// check for target elements' existence. passes to checkNode().
+// Mutation observer checks for target elements' existence. passes to checkNode().
 var init_observer = new MutationObserver(function(mutations){
   for (var i=0; i < mutations.length; i++){
     for (var j=0; j < mutations[i].addedNodes.length; j++){
@@ -77,7 +119,7 @@ init_observer.observe(document.documentElement, {
 });
 
 
-// does different stuff depending on what the node is
+// passes each node of interest to its unique handler
 function checkNode(addedNode) {
   if (addedNode.nodeType === 1){
 
@@ -102,7 +144,7 @@ function checkNode(addedNode) {
         // resetTimer();
         if (slots_count === 3) {
           //alert('thumbnails ready');
-          change_thumbnail(random_index);
+          change_thumbnail(yt_index);
         }
       }
     }
@@ -119,9 +161,12 @@ function checkNode(addedNode) {
         if (thumbnail_src_idx === 3) {
             setTimeout(function(){
               console.log('changing thumbnail href');
-              tag = generate_watch_tag('hY7m5jjJ9mM');
+              //tag = generate_watch_tag('hY7m5jjJ9mM');
+              vidId = window.localStorage.getItem('videoID');
+              tag = generate_watch_tag(vidId);        
+    
 
-              div = document.querySelectorAll('ytd-compact-video-renderer .yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail')[random_index];
+              div = document.querySelectorAll('ytd-compact-video-renderer .yt-simple-endpoint.inline-block.style-scope.ytd-thumbnail')[yt_index];
               div.setAttribute('href', tag);
 
               //console.log(div);
@@ -142,12 +187,12 @@ function checkNode(addedNode) {
 
         if (title_href_count === 3) {
           console.log('changing title')
-          change_title(random_index);
+          change_title(yt_index);
         }
 
         if (metadata_count === 3) {
           console.log('changing metadata')
-          change_metadata(random_index);
+          change_metadata(yt_index);
         }
       }
     }
@@ -160,21 +205,18 @@ function checkNode(addedNode) {
 function change_thumbnail(r) {
 
   //alert('thumbnail callback');
-  console.log('(change_thumbnail))');
-
+  console.log('(change_thumbnail)' + r);
 
     // Simulate a code delay
-  setTimeout( function(){
-    console.log('hello');
-    //console.log(img);
+  setTimeout(function(){
 
     img = document.querySelectorAll('ytd-compact-video-renderer #thumbnail #img')[r];
     console.log(img);
-    img.setAttribute('src', 'https://i.ytimg.com/vi/hY7m5jjJ9mM/default.jpg');
+    rec_src = window.localStorage.getItem('thumbnailURL');
+    console.log(rec_src);
+    img.setAttribute('src', rec_src);
     console.log(img);
-    //img.on('click', function(){console.log('hi')});
-    //.on("click", function(){ myFunction(); });
-    //img.setAttribute('class', 'inline-block style-scope ytd-thumbnail');
+
 
     // overlays = img.querySelector('ytd-thumbnail-overlay-side-panel-renderer');
 
@@ -205,7 +247,10 @@ function change_title(r) {
     console.log('(change_title))');
     console.log(r);
 
-    tag = generate_watch_tag('hY7m5jjJ9mM');        
+    vidId = window.localStorage.getItem('videoID');
+    tag = generate_watch_tag(vidId);      
+    console.log('url is: ' + tag)  
+
     div = document.querySelectorAll('.yt-simple-endpoint.style-scope.ytd-compact-video-renderer')[r];
 
     console.log(div);
@@ -213,9 +258,11 @@ function change_title(r) {
 
     // change video title
     title = div.querySelector('#video-title');
-    title.setAttribute('title', rec_details['title']);
-    title.setAttribute('aria-label', rec_details['title']);
-    title.innerHTML = rec_details['title'];
+    rec_title = window.localStorage.getItem('title');
+
+    title.setAttribute('title', rec_title);
+    title.setAttribute('aria-label', rec_title);
+    title.innerHTML = rec_title;
     console.log(title)
 
     //remove badge renderer
@@ -255,8 +302,9 @@ function change_metadata(r) {
   }
 
   channel = div.querySelector('yt-formatted-string');
-  channel.setAttribute('title', rec_details['channelTitle']);
-  channel.innerHTML = rec_details['channelTitle'];
+  rec_channel = window.localStorage.getItem('channelTitle');
+  channel.setAttribute('title', rec_channel);
+  channel.innerHTML = rec_channel;
 
   metadata = div.querySelector('#metadata-line span');
   console.log(metadata);
