@@ -5,6 +5,7 @@ import time
 from tqdm import tqdm
 import dateparser
 import datetime 
+import random
 
 """
 # TODO:
@@ -134,9 +135,24 @@ def updateUserRecs(UID, client):
         #print(row[2])for UID in tqdm(UIDs):
         videoRecs = keyword_to_videos(row[2][:40])
         for item in videoRecs["items"]:
-            newRec = [str(time.time()), "https://www.youtube.com/watch?v="+item['id']['videoId'], rowNum]
-            print(newRec)
+            videoTitle = item['snippet']['title']
+            channelTitle = item["snippet"]["channelTitle"]
+            videoId = item['id']['videoId']
+            thumbnailURL = item['snippet']['thumbnails']['default']['url']
+            newRec = [str(time.time()), videoTitle, channelTitle, videoId, thumbnailURL, rowNum]
+            # print(newRec)
             youtubeRecSheet.append_row(newRec)
+
+def chooseRecs(UID, client):
+    youtubeRecSheet = client.open(UID).get_worksheet(1)
+    publicSheet = client.open(UID+"-Recs").get_worksheet(0)
+    publicSheet.clear()
+    allRecs = youtubeRecSheet.get_all_values()
+    chosenRecs = [allRecs[0]]
+    chosenRecs += random.sample(allRecs[1:], 5)
+    for row in chosenRecs:
+        publicSheet.append_row(row)
+
 
 def main2():
     UIDs = ['0001', '0001']
@@ -160,6 +176,8 @@ def main():
     for UID in tqdm(UIDs):
         #can multithread this if need be
         updateUserRecs(UID, client)
+        chooseRecs(UID, client)
+
 
 
 if __name__ == '__main__':
